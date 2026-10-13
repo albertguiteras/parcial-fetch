@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parcial APIs y Fetch - Fútbol App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR CON WIDGETS DE APIS PÚBLICAS -->
+  <header class="top-bar">
+    <div class="brand">
+      <span class="badge">IFCD_0210</span>
+      <h1>Panel Deportivo & APIs</h1>
+    </div>
+
+    <div class="public-widgets">
+      <!-- 1.2 POKEAPI: POKEMON DEL DIA -->
+      <aside class="widget pokemon-widget" id="widgetPokemon">
+        <div class="widget-header">
+          <span class="widget-tag">POKEAPI</span>
+          <span class="widget-title">Pokémon del día</span>
+        </div>
+        <div class="pokemon-body">
+          <img id="pokeImg" src="" alt="Cargando pokémon..." class="poke-avatar">
+          <div class="poke-info">
+            <h4 id="pokeNombre">Cargando...</h4>
+            <span id="pokeId" class="poke-sub">#---</span>
+          </div>
+        </div>
+        <button id="btnNuevoPokemon" class="btn-micro" title="Ver otro pokémon">🎲 Otro</button>
+      </aside>
+
+      <!-- 1.1 OPENWEATHERMAP: TIEMPO EN TU CIUDAD (EN LA ESQUINA) -->
+      <aside class="widget weather-widget" id="widgetTiempo">
+        <div class="widget-header">
+          <span class="widget-tag">OPENWEATHER</span>
+          <span class="widget-title" id="ciudad">Cargando ciudad...</span>
+        </div>
+        <div class="weather-body">
+          <div class="weather-icon-box" id="icono">
+            <img id="iconoClima" src="" alt="Icono del tiempo">
+          </div>
+          <div class="weather-details">
+            <div class="temp-val" id="temperatura">-- °C</div>
+            <div class="weather-desc" id="descripcion">Obteniendo datos...</div>
+            <div class="weather-hum" id="humedad">Humedad: --%</div>
+          </div>
+        </div>
+        <div id="weatherAviso" class="weather-note" style="display: none;"></div>
+      </aside>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL: API SPRING BOOT (FÚTBOL) -->
+  <main class="container">
+    <div class="main-title-block">
+      <h2>Gestión de Equipos y Partidos</h2>
+      <p>App conectada a API REST Spring Boot + MySQL (Métodos GET y POST)</p>
+    </div>
+
+    <!-- SECCION DE FORMULARIOS (POST) -->
+    <section class="forms-grid">
+      <!-- Formulario 1: Crear Equipo (POST /api/equipos) -->
+      <div class="card form-card">
+        <div class="card-header">
+          <span class="icon">⚽</span>
+          <h3>Nuevo Equipo (POST)</h3>
+        </div>
+        <form id="formEquipo">
+          <div class="form-group">
+            <label for="nombreEquipo">Nombre del Club</label>
+            <input type="text" id="nombreEquipo" placeholder="Ej. Real Madrid, FC Barcelona..." required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ciudadEquipo">Ciudad</label>
+              <input type="text" id="ciudadEquipo" placeholder="Ej. Madrid, Barcelona..." required>
+            </div>
+            <div class="form-group">
+              <label for="estadioEquipo">Estadio</label>
+              <input type="text" id="estadioEquipo" placeholder="Ej. Santiago Bernabéu...">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Registrar Equipo</button>
+        </form>
+      </div>
+
+      <!-- Formulario 2: Registrar Partido (POST /api/partidos) -->
+      <div class="card form-card">
+        <div class="card-header">
+          <span class="icon">🏆</span>
+          <h3>Registrar Partido (POST)</h3>
+        </div>
+        <form id="formPartido">
+          <div class="form-group">
+            <label for="selectEquipo">Seleccionar Equipo Local</label>
+            <select id="selectEquipo" required>
+              <option value="" disabled selected>-- Elige un equipo --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rivalPartido">Equipo Rival</label>
+            <input type="text" id="rivalPartido" placeholder="Ej. Atlético de Madrid, Sevilla..." required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fechaPartido">Fecha</label>
+              <input type="date" id="fechaPartido" required>
+            </div>
+            <div class="form-group">
+              <label for="golesFavor">Goles a Favor</label>
+              <input type="number" id="golesFavor" min="0" value="0" required>
+            </div>
+            <div class="form-group">
+              <label for="golesContra">Goles en Contra</label>
+              <input type="number" id="golesContra" min="0" value="0" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-accent">Guardar Partido</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SECCION DE VISUALIZACION DE DATOS (GET) -->
+    <section class="results-section">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h3>Equipos Registrados y sus Partidos (GET)</h3>
+          <span id="contadorEquipos" class="pill">0 equipos</span>
+        </div>
+        <button id="btnRecargar" class="btn btn-secondary">🔄 Actualizar Datos</button>
+      </div>
+
+      <!-- Contenedor donde se insertan los equipos con createElement / template literals -->
+      <div id="contenedorEquipos" class="cards-grid">
+        <div class="empty-state">
+          <p>Cargando datos desde la API de Spring Boot (http://localhost:8080)...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Prueba Parcial APIs (Módulo 2, Unidad 3) | IFCD_0210 Desarrollo de Aplicaciones con Tecnologías Web</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
