@@ -5,8 +5,8 @@ const API_KEY_WEATHER = "83bf07fd6a957b52874ea904d91fe137";
 const CIUDAD_WEATHER = "barcelona,es";
 const URL_WEATHER = `https://api.openweathermap.org/data/2.5/weather?q=${CIUDAD_WEATHER}&appid=${API_KEY_WEATHER}&units=metric&lang=es`;
 
-const URL_API_EQUIPOS = "http://localhost:8080/api/equipos";
-const URL_API_PARTIDOS = "http://localhost:8080/api/partidos";
+const URL_API_EQUIPOS = "https://futbol-api-g7wl.onrender.com/api/equipos";
+const URL_API_PARTIDOS = "https://futbol-api-g7wl.onrender.com/api/partidos";
 
 // ==========================================
 // 1.1 OPENWEATHERMAP: TIEMPO EN TU CIUDAD
@@ -116,7 +116,7 @@ function cargarEquipos() {
       console.warn("No se pudo conectar a Spring Boot aún:", err.message);
       contenedorEquipos.innerHTML = `
         <div class="empty-state">
-          <p>⚠️ No hay conexión con el servidor Spring Boot (http://localhost:8080/api/equipos).</p>
+          <p>⚠️ No hay conexión con el servidor Spring Boot (https://futbol-api-g7wl.onrender.com/api/equipos).</p>
           <small>Asegúrate de haber iniciado la aplicación Spring Boot en el puerto 8080.</small>
         </div>
       `;
